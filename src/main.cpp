@@ -21,14 +21,14 @@ const int HEIGHT = 720;
 const int WIDTH = 1240;
 
 const char* title = "APPP COOL";
-
+ 
 
 GLuint VAO;
 GLuint verticesID;
 GLuint normalsID;
 GLuint programID;
 
-glm::vec3 lightPos = glm::vec3(4.f, 3.f, 3.f);
+glm::vec3 lightPos = glm::vec3(20.f, 3.f, 3.f);
 glm::vec3 lightColor = glm::vec3(1.f, 1.f, 1.f);
 glm::vec3 objColor = glm::vec3(.2f, .5f, .5f);
 glm::vec3 viewPos;
@@ -38,9 +38,15 @@ glm::mat4 view;
 glm::mat4 projection;
 
 void handleInput(GLFWwindow* window);
+
 void matrices_init(glm::mat4& model, glm::mat4& view, glm::mat4& projection);
+
 void buffers_init();
+
 void main_init();
+
+void render_buffers();
+
 
 int main(int argc, char const *argv[])
 {
@@ -48,11 +54,13 @@ int main(int argc, char const *argv[])
 
     matrices_init(model, view, projection);
 
-    const aiScene* scene = load_model("../Room.blend", &data);
 
     glClearColor(0.3, 0.3, 0.3, 1.0);
 
     buffers_init();
+
+    load_model("../Room.blend");
+
 
     GLuint modelID = glGetUniformLocation(programID, "model");
     GLuint viewID = glGetUniformLocation(programID, "view");
@@ -78,8 +86,8 @@ int main(int argc, char const *argv[])
         glUniformMatrix4fv(viewID, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(projectionID, 1, GL_FALSE, glm::value_ptr(projection));
 
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, data.verticesNum * 3);
+
+        render_buffers();
 
         glfwPollEvents();
         glfwSwapBuffers(window);
@@ -121,25 +129,29 @@ void buffers_init()
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 
-    glGenBuffers(1, &verticesID);
-    glBindBuffer(GL_ARRAY_BUFFER, verticesID);
-    glBufferData(GL_ARRAY_BUFFER, data.verticesNum * 3 * sizeof(GLfloat), data.vertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-    glGenBuffers(1, &normalsID);
-    glBindBuffer(GL_ARRAY_BUFFER, normalsID);
-    glBufferData(GL_ARRAY_BUFFER, data.verticesNum * 3 * sizeof(GLfloat), data.normals, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+     
 }
+
+void render_buffers()
+{
+	glBindVertexArray(VAO);
+
+	for(int i = 0; i < bufferSize; i++)
+	{
+        glBindBuffer(GL_ARRAY_BUFFER, buffers[i].verticesID);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[i].indicesID);
+
+		glDrawElements(GL_TRIANGLES, buffers[i].verticesNum * 3, GL_UNSIGNED_INT, 0);
+
+	};
+};
 
 void matrices_init(glm::mat4& model, glm::mat4& view, glm::mat4& projection)
 {
     model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0, 0, -5));
 
-    viewPos = glm::vec3(4, 4, 3);
+    viewPos = glm::vec3(0, 0, 3);
     view = glm::lookAt(viewPos, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 
     projection = glm::perspective(glm::radians(45.0f), 5.0f / 3.0f, 0.1f, 100.0f);

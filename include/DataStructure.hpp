@@ -7,19 +7,35 @@ struct Data
 {
 	GLfloat *vertices;
 	GLfloat *normals;
+	GLuint *indices;
 
-	unsigned int verticesNum;
+	int verticesNum;
 
-} data;
+};
 
 
 struct Buffer
 {
 	GLuint verticesID;
-	GLfloat *verticesData;
-
 	GLuint normalsID;
-	GLfloat* normalsData;
-} buffer;
+	GLuint indicesID;
+
+	int indicesNum; 
+	int verticesNum;
+
+	// GLfloat* normalsData;
+	// GLfloat *verticesData;
+
+};
+
+static int bufferIndex = 0;
+
+extern int bufferSize;
+
+extern Data data;
+extern Buffer buffer;
+extern Buffer* buffers;
+
+
 
 #endif

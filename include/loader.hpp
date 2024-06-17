@@ -5,9 +5,12 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <GL/glew.h>
+#include <vector>
 #include "DataStructure.hpp"
- 
-void load_model(const char* path,  Data* data);
+
+void load_model(const char* path);
+
+extern const aiScene* scene;
 
 
 
